@@ -19,15 +19,19 @@ if __name__ == '__main__':
             "end": {"dateTime": session["dayEnd"], "timeZone": 'America/Sao_Paulo'},
         }
         
-        summaries = [event["summary"] for event in events if summary == event["summary"]]
+
+        try: summaries = [event["summary"] for event in events if summary == event["summary"]]
+        except: 
+            print('Criando evento', summary)
+            calendar.create_event(body)
         
         for event in events: 
             
             if len(summaries) == 0: 
-                print('Criando evento', event["summary"])
+                print('Criando evento', summary)
                 calendar.create_event(body)
                 break
             
             if summary == event["summary"]: 
-                print('Alterando evento', event["summary"])
+                print('Alterando evento', summary)
                 calendar.update_event(body, event_id=event["id"])  
