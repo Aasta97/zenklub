@@ -1,5 +1,6 @@
 from src.Common.Google.Calendar import Calendar
 from src.Common.Zenklub.Zenklub import Zenklub
+import sys
 
 if __name__ == '__main__':
     zenklub  = Zenklub()
@@ -20,18 +21,17 @@ if __name__ == '__main__':
         }
         
 
-        try: summaries = [event["summary"] for event in events if summary == event["summary"]]
+        try: 
+            summaries = [event["summary"] for event in events if summary == event["summary"]]
+            for event in events:
+                if len(summaries) == 0: 
+                    print('Criando evento', summary)
+                    calendar.create_event(body)
+                    break
+                
+                if summary == event["summary"]: 
+                    print('Alterando evento', summary)
+                    calendar.update_event(body, event_id=event["id"])
         except: 
             print('Criando evento', summary)
-            calendar.create_event(body)
-        
-        for event in events: 
-            
-            if len(summaries) == 0: 
-                print('Criando evento', summary)
-                calendar.create_event(body)
-                break
-            
-            if summary == event["summary"]: 
-                print('Alterando evento', summary)
-                calendar.update_event(body, event_id=event["id"])  
+            calendar.create_event(body)           
