@@ -1,25 +1,48 @@
-import json
 import requests
+import json
+import os
 
-url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBmvSYlFxiQYhaxpUeresGeaSdkjP1w-gs'
+def generate_token():
+    """ Generate bearer token
+
+    :return: Return json response
+    :rtype: json
+    """
     
-data = {
-	"email": "",
-	"password": "",
-	"returnSecureToken": True
-}
-
-
-r = requests.post(url, data=data)
-response = json.loads(r.text)
-
-hed = {'Authorization': 'Bearer ' + response['idToken']}
-
-with requests.Session() as s:    
-    r = s.get('https://api.zenklub.com.br/appointments?status=new,invite,paid,reschedule,reserved&includeProfessional=true&limit=10', headers=hed)
-    response = json.loads(r.text)
+    url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyBmvSYlFxiQYhaxpUeresGeaSdkjP1w-gs'
     
-    from pprint import pprint
-    pprint(response)
-    with open('data.json', 'w') as f:
-        json.dump(response, f)
+    data = {
+        "email": os.environ['EMAIL'],
+        "password": os.environ['SENHA'],
+        "returnSecureToken": True
+    }
+
+    response = requests.post(url, data=data)
+
+    try:
+        return json.loads(response.text)['idToken']
+    except: return False
+
+
+def get_sessions_data(token):
+    """Get sessions data
+
+    :param token: Bearer token auth
+    :type token: string
+    :return: Sessions json data
+    :rtype: json
+    """
+    
+    if not token: return { "erro": "Missing token"}
+    
+    url = 'https://api.zenklub.com.br/appointments?status=new,invite,paid,reschedule,reserved&includeProfessional=true&limit=10'
+    headers = {'Authorization': 'Bearer ' + token}
+
+    response = requests.get(url, headers=headers)
+    return json.loads()
+
+if __name__ == '__main__':
+    token = generate_token()
+    sessions = get_sessions_data(token)      
+        
+    print(sessions)
