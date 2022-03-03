@@ -2,7 +2,7 @@ from src.Common.Google.Calendar import Calendar
 from src.Common.Zenklub.Zenklub import Zenklub
 import sys
 
-if __name__ == '__main__':
+def run():
     zenklub  = Zenklub()
     calendar = Calendar()
 
